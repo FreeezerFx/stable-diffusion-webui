@@ -3,6 +3,9 @@ import base64
 import os
 from datetime import datetime
 import time
+import json
+import torch
+import numpy as np
 
 def timestamp():
     return datetime.fromtimestamp(time.time()).strftime("%Y%m%d-%H%M%S")
@@ -13,7 +16,9 @@ API_URL = "http://127.0.0.1:7861/sdapi/v1/txt2img"
 
 # Create output directory if it doesn't exist
 output_dir = "generated_images"
+latent_dir = "latent_vectors"
 os.makedirs(output_dir, exist_ok=True)
+os.makedirs(latent_dir, exist_ok=True)
 
 # Define payload
 payload = {
@@ -24,6 +29,7 @@ payload = {
     "height": 512,
     "cfg_scale": 10,
     "sampler_name": "DPM++ 2M Karras",
+    "return_latent": True
 }
 
 # Send request
@@ -45,6 +51,13 @@ if response.status_code == 200:
             img_file.write(image_bytes)
         
         print(f"Image saved as {filename}")
+    if 'latents' in result:
+        latent_vectors = result['latents']  # Assuming it's a list of latent tensors
+        latent_tensor = torch.tensor(latent_vectors)
 
+        latent_filename = os.path.join(latent_dir, f"latent-{timestamp()}.pt")
+        torch.save(latent_tensor, latent_filename)
+
+        print(f"Latent vector saved as {latent_filename}")
 else:
     print("Error:", response.text)
