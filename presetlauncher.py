@@ -19,6 +19,7 @@ output_dir = "generated_images"
 latent_dir = "latent_vectors"
 os.makedirs(output_dir, exist_ok=True)
 os.makedirs(latent_dir, exist_ok=True)
+intermediate_steps = [5,15,25]
 
 # Define payload
 payload = {
@@ -29,7 +30,9 @@ payload = {
     "height": 512,
     "cfg_scale": 10,
     "sampler_name": "DPM++ 2M Karras",
-    "return_latent": True
+    "return_latent": True,
+    "save_images": True,
+    "save_steps": intermediate_steps
 }
 
 # Send request
