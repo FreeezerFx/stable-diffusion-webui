@@ -17,9 +17,12 @@ API_URL = "http://127.0.0.1:7861/sdapi/v1/txt2img"
 # Create output directory if it doesn't exist
 output_dir = "generated_images"
 latent_dir = "latent_vectors"
+intermediate_dir = "intermediate_steps"
+intermediate_steps = [5,15,25]
 os.makedirs(output_dir, exist_ok=True)
 os.makedirs(latent_dir, exist_ok=True)
-intermediate_steps = [5,15,25]
+os.makedirs(intermediate_dir, exist_ok=True)
+
 
 # Define payload
 payload = {
