@@ -13,6 +13,7 @@ def timestamp():
 
 # Define API URL
 API_URL = "http://127.0.0.1:7861/sdapi/v1/txt2img"
+# API document http://127.0.0.1:7861/docs#/
 
 # Create output directory if it doesn't exist
 output_dir = "generated_images"
@@ -44,6 +45,8 @@ response = requests.post(API_URL, json=payload)
 if response.status_code == 200:
     result = response.json()
     
+    print(result.keys())
+
     # Loop through each generated image in the batch
     for idx, image_data in enumerate(result['images']):
         # Decode Base64 image data
@@ -57,13 +60,5 @@ if response.status_code == 200:
             img_file.write(image_bytes)
         
         print(f"Image saved as {filename}")
-    if 'latents' in result:
-        latent_vectors = result['latents']  # Assuming it's a list of latent tensors
-        latent_tensor = torch.tensor(latent_vectors)
-
-        latent_filename = os.path.join(latent_dir, f"latent-{timestamp()}.pt")
-        torch.save(latent_tensor, latent_filename)
-
-        print(f"Latent vector saved as {latent_filename}")
 else:
     print("Error:", response.text)

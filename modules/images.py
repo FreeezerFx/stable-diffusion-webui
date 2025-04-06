@@ -9,6 +9,7 @@ import os
 from collections import namedtuple
 import re
 
+import torch
 import numpy as np
 import piexif
 import piexif.helper
@@ -765,6 +766,34 @@ def save_image(image, path, basename, seed=None, prompt=None, extension='png', i
     script_callbacks.image_saved_callback(params)
 
     return fullfn, txt_fullfn
+
+def save_image_with_latent(image, latent, path, basename, seed=None, prompt=None, format='png', info=None):
+    """
+    Saves an image and its corresponding latent vector to disk.
+
+    Args:
+        image (PIL.Image): The generated image.
+        latent (torch.Tensor): The latent vector associated with the image.
+        path (str): Directory to save the files.
+        basename (str): Base name for the files.
+        seed (int): Seed used for generation (optional).
+        prompt (str): Prompt used for generation (optional).
+        format (str): Image format ('png' by default).
+        info (str): Additional metadata for the image (optional).
+    """
+    # Save image
+    image_path = os.path.join(path, f"{basename}.{format}")
+    image.save(image_path)
+
+    # Save latent vector
+    latent_path = os.path.join(path, f"{basename}.pt")
+    torch.save(latent.cpu(), latent_path)
+
+    # Optionally log metadata
+    if info:
+        metadata_path = os.path.join(path, f"{basename}_info.txt")
+        with open(metadata_path, 'w') as f:
+            f.write(info)
 
 
 IGNORED_INFO_KEYS = {

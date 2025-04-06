@@ -1083,7 +1083,7 @@ def process_images_inner(p: StableDiffusionProcessing) -> Processed:
 
                 if save_samples:
                     images.save_image(image, p.outpath_samples, "", p.seeds[i], p.prompts[i], opts.samples_format, info=infotext(i), p=p)
-
+                    images.save_image_with_latent(image=image,latent=processed.latents[i], path=p.outpath_samples,basename=f"output_{p.seeds[i]}",seed=p.seeds[i],prompt=p.prompts[i],format=opts.samples_format,info=create_infotext(p, p.prompts, p.seeds, p.subseeds))
                 text = infotext(i)
                 infotexts.append(text)
                 if opts.enable_pnginfo:
@@ -1197,6 +1197,17 @@ class StableDiffusionProcessingTxt2Img(StableDiffusionProcessing):
     hr_prompts: list = field(default=None, init=False)
     hr_negative_prompts: list = field(default=None, init=False)
     hr_extra_network_data: list = field(default=None, init=False)
+
+    def process(self):
+
+        samples = self.sampler.sample(
+            self.sd_model, 
+            self.conditioning, 
+            self.init_latent, 
+            self.steps
+        )
+
+        self.latents = samples
 
     def __post_init__(self):
         super().__post_init__()
