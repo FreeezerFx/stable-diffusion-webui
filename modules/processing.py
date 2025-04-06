@@ -567,7 +567,16 @@ class Processed:
         self.all_subseeds = all_subseeds or p.all_subseeds or [self.subseed]
         self.infotexts = infotexts or [info] * len(images_list)
         self.version = program_version()
+    def process(self):
 
+        samples = self.sampler.sample(
+            self.sd_model, 
+            self.conditioning, 
+            self.init_latent, 
+            self.steps
+        )
+        self.latents = samples
+        
     def js(self):
         obj = {
             "prompt": self.all_prompts[0],

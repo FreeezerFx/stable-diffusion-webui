@@ -1,3 +1,4 @@
+import torch
 from modules import scripts, processing, shared
 
 class LatentSaver(scripts.Script):
